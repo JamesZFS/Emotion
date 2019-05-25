@@ -1,0 +1,18 @@
+def build_RNN():
+	'''build and compile an RNN models
+
+	:return: RNN models
+	'''
+	dims = (300, 50, 8)
+	model = Sequential()
+	model.add(layers.InputLayer(input_shape=(None, dims[0])))
+	model.add(layers.Masking(mask_value=0.0))
+	model.add(layers.GRU(units=dims[1], return_sequences=False))
+	model.add(layers.Dropout(0.2))
+	model.add(layers.Dense(units=dims[2], activation='softmax'))
+
+	opt = optimizers.RMSprop(lr=0.01, rho=0.9, epsilon=None, decay=0.01)
+	model.compile(opt, loss='mse', metrics=['acc'])
+	model.summary()
+
+	return model

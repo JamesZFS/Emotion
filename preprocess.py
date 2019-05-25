@@ -3,6 +3,7 @@ import pickle
 import re
 
 import numpy as np
+# from  keras.preprocessing.text import Tokenizer
 
 tag_list = ('感动', '同情', '无聊', '愤怒', '搞笑', '难过', '新奇', '温馨')
 
@@ -31,7 +32,7 @@ def get_tag(line: str):
 	return np.array(tag)
 
 
-def get_embedding_list(line: str, time_steps: int = 0, silent: bool = False):
+def get_embedding_list(line: str, time_steps: int = 500, silent: bool = False):
 	'''
 
 	:param line: one line of article
@@ -105,7 +106,7 @@ def generator_from_file(raw_path: str, batch_size: int = 10, shuffle: bool = Tru
 			cur_idx += 1
 			if cur_idx == len(lines): cur_idx = 0  # start over
 			Y.append(get_tag(line))
-			X.append(get_embedding_list(line, time_steps=500, silent=True))
+			X.append(get_embedding_list(line, silent=True))
 
 		yield np.array(X), np.array(Y)
 
@@ -130,7 +131,7 @@ def generator_from_file_debug(raw_path: str, batch_size: int = 10, shuffle: bool
 			cur_idx += 1
 			if cur_idx == len(lines): cur_idx = 0  # start over
 			Y.append(get_tag(line))
-			X.append(get_embedding_list(line, time_steps=500, silent=True))
+			X.append(get_embedding_list(line, silent=True))
 			mt = tag_pattern.search(line)
 			articles.append(''.join(line[mt.end():].split(' ')))
 

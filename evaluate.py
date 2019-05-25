@@ -3,7 +3,7 @@ import os
 from keras import Sequential
 from numpy import set_printoptions
 
-from preprocess import tag_list, generator_from_file_debug
+from preprocess import tag_list, generator_from_file, generator_from_file_debug
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # todo this is important on mac
 
@@ -39,10 +39,14 @@ if __name__ == '__main__':
 	from train import build_RNN
 
 	model = build_RNN()
-	model.load_weights('models/model2.0 - final.h5')
+	model.load_weights('models/model2.2 - best.h5')
+
+	test_gen = generator_from_file('data/runtime/test', batch_size=10)  # around 2000 articles
+	test_loss, test_acc = model.evaluate_generator(test_gen, steps=203)
+	print('\n\033[1;34mtest_loss = %f\ntest_acc = %f' % (test_loss, test_acc), '\033[0m\n')
 
 	evaluate_model(model, eval_data_path='data/sina/sinanews.demo', steps=8)
 
 	evaluate_model(model, eval_data_path='data/sina/sinanews.train', steps=20)
 
-	evaluate_model(model, eval_data_path='data/sina/sinanews.test', steps=20)
+	evaluate_model(model, eval_data_path='data/sina/sinanews.test', steps=30)
