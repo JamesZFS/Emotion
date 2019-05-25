@@ -96,6 +96,24 @@ def get_article_max_len(file: str):
 	return max_len
 
 
+def load_dataset_from_file(raw_path: str, shuffle: bool = True):
+	'''load dataset from file
+
+	:param raw_path: news path
+	:return: (X, Y) where X shape like (n_article, 500), Y shape like (n_article, 8)
+	'''
+	with open(raw_path, 'r') as f:
+		lines = f.readlines()
+	if shuffle: np.random.shuffle(lines)
+
+	X, Y = [], []
+	for line in lines:
+		X.append(get_encoded_text(line))
+		Y.append(get_tag(line))
+
+	return np.array(X), np.array(Y)
+
+
 def generator_from_file(raw_path: str, batch_size: int = 10, shuffle: bool = True):
 	'''
 	generate data from file

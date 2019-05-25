@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/train.py" line="10" />
+    <bookmark url="file://$PROJECT_DIR$/train.py" line="9" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="24e3b1c0-0d6f-4e4b-b7d4-275bbb793ec3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/evaluate.py" beforeDir="false" afterPath="$PROJECT_DIR$/evaluate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/model3.0.csv" beforeDir="false" afterPath="$PROJECT_DIR$/logs/model3.0.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/preprocess.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
@@ -24,9 +25,9 @@
     <SUITE FILE_PATH="coverage/Emotion$test.coverage" NAME="test Coverage Results" MODIFIED="1558802208694" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Emotion$embedding_dict.coverage" NAME="embedding_dict Coverage Results" MODIFIED="1558755956022" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/embeddings" />
     <SUITE FILE_PATH="coverage/Emotion$scratch_39.coverage" NAME="scratch_39 Coverage Results" MODIFIED="1558772099524" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
-    <SUITE FILE_PATH="coverage/Emotion$evaluate.coverage" NAME="evaluate Coverage Results" MODIFIED="1558784565917" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Emotion$preprocess.coverage" NAME="preprocess Coverage Results" MODIFIED="1558805212759" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Emotion$train.coverage" NAME="train Coverage Results" MODIFIED="1558805903971" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Emotion$evaluate.coverage" NAME="evaluate Coverage Results" MODIFIED="1558807800811" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Emotion$train.coverage" NAME="train Coverage Results" MODIFIED="1558807178567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FUSProjectUsageTrigger">
     <session id="-524420182">
@@ -41,10 +42,10 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="csv" value="6" />
+          <entry key="csv" value="9" />
           <entry key="demo" value="7" />
           <entry key="gitignore" value="4" />
-          <entry key="h5" value="1" />
+          <entry key="h5" value="3" />
           <entry key="npy" value="1" />
           <entry key="py" value="49" />
           <entry key="pyi" value="1" />
@@ -57,8 +58,8 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="CSV" value="6" />
-          <entry key="PLAIN_TEXT" value="28" />
+          <entry key="CSV" value="9" />
+          <entry key="PLAIN_TEXT" value="30" />
           <entry key="Python" value="40" />
           <entry key="PythonStub" value="1" />
           <entry key="Scratch" value="10" />
@@ -68,7 +69,7 @@
         <counts>
           <entry key="dummy" value="25" />
           <entry key="gitignore" value="26" />
-          <entry key="py" value="15515" />
+          <entry key="py" value="16281" />
           <entry key="ttt" value="3" />
           <entry key="txt" value="1" />
           <entry key="val" value="1" />
@@ -77,7 +78,7 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="56" />
-          <entry key="Python" value="14745" />
+          <entry key="Python" value="15511" />
           <entry key="Scratch" value="770" />
         </counts>
       </usages-collector>
@@ -85,27 +86,16 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="112">
-              <caret line="7" selection-start-line="7" selection-end-line="7" />
-              <folding>
-                <marker date="1558805799632" expanded="true" signature="1011:1230" ph="..." />
-                <marker date="1558805799632" expanded="true" signature="1230:1233" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/preprocess.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="17" column="68" selection-start-line="17" selection-start-column="68" selection-end-line="17" selection-end-column="68" />
+            <state relative-caret-position="228">
+              <caret line="18" column="24" lean-forward="true" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
-                <marker date="1558805903966" expanded="true" signature="1744:1747" ph="..." />
+                <element signature="e#1180#1463#1" />
+                <element signature="e#1870#2111#1" />
+                <marker date="1558807750965" expanded="true" signature="943:945" ph="..." />
               </folding>
             </state>
           </provider>
@@ -132,11 +122,14 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/evaluate.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="6" column="5" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
+            <state relative-caret-position="269">
+              <caret line="45" column="65" selection-start-line="45" selection-start-column="65" selection-end-line="45" selection-end-column="65" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -156,6 +149,18 @@
             <state relative-caret-position="272">
               <caret line="17" column="10" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
             </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/logs/model2.1.csv">
+          <provider selected="true" editor-type-id="csv-text-editor">
+            <state relative-caret-position="64">
+              <caret line="4" column="23" selection-start-line="4" selection-start-column="23" selection-end-line="4" selection-end-column="23" />
+            </state>
+          </provider>
+          <provider editor-type-id="csv-table-editor">
+            <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
           </provider>
         </entry>
       </file>
@@ -217,9 +222,11 @@
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_42.py" />
         <option value="$PROJECT_DIR$/encoder.py" />
+        <option value="$PROJECT_DIR$/logs/model2.1.csv" />
+        <option value="$PROJECT_DIR$/preprocess.py" />
+        <option value="$PROJECT_DIR$/logs/model3.1.csv" />
         <option value="$PROJECT_DIR$/train.py" />
         <option value="$PROJECT_DIR$/evaluate.py" />
-        <option value="$PROJECT_DIR$/preprocess.py" />
       </list>
     </option>
   </component>
@@ -271,6 +278,11 @@
             </path>
             <path>
               <item name="Emotion" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Emotion" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Emotion" type="b2602c69:ProjectViewProjectNode" />
               <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
             </path>
             <path>
@@ -309,7 +321,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.train">
+  <component name="RunManager" selected="Python.evaluate">
     <configuration name="evaluate" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Emotion" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -429,11 +441,11 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.evaluate" />
         <item itemvalue="Python.train" />
         <item itemvalue="Python.preprocess" />
         <item itemvalue="Python.scratch_42" />
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.evaluate" />
       </list>
     </recent_temporary>
   </component>
@@ -590,13 +602,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/data/train_val_test/train" />
     <entry file="file://$PROJECT_DIR$/data/train_val_test/val" />
-    <entry file="file://$PROJECT_DIR$/models/model2.0 - final.h5">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/logs/model2.0.csv">
       <provider selected="true" editor-type-id="csv-text-editor">
         <state relative-caret-position="176">
@@ -639,16 +644,6 @@
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/logs/model2.1.csv">
-      <provider selected="true" editor-type-id="csv-text-editor">
-        <state relative-caret-position="96">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-      <provider editor-type-id="csv-table-editor">
-        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/data/sina/sinanews.test">
@@ -728,13 +723,6 @@
         <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/evaluate.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="6" column="5" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_42.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="32">
@@ -752,17 +740,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/preprocess.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="17" column="68" selection-start-line="17" selection-start-column="68" selection-end-line="17" selection-end-column="68" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-            <marker date="1558805903966" expanded="true" signature="1744:1747" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/logs/model2.0.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="112">
@@ -770,13 +747,73 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/logs/model2.1.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="64">
+          <caret line="4" column="23" selection-start-line="4" selection-start-column="23" selection-end-line="4" selection-end-column="23" />
+        </state>
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/preprocess.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="102" column="66" lean-forward="true" selection-start-line="102" selection-start-column="66" selection-end-line="102" selection-end-column="66" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+            <marker date="1558807099302" expanded="true" signature="1744:1747" ph="..." />
+            <marker date="1558807099302" expanded="true" signature="2341:2712" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/logs/model3.0.csv">
+      <provider selected="true" editor-type-id="csv-text-editor" />
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/logs/model3.1.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="32">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/model2.3 - final.h5">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/model2.0 - final.h5">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2524">
+          <caret line="15" column="43" lean-forward="true" selection-start-line="15" selection-start-column="43" selection-end-line="15" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        <state relative-caret-position="228">
+          <caret line="18" column="24" lean-forward="true" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
           <folding>
-            <marker date="1558805799632" expanded="true" signature="1011:1230" ph="..." />
-            <marker date="1558805799632" expanded="true" signature="1230:1233" ph="..." />
+            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#1180#1463#1" />
+            <element signature="e#1870#2111#1" />
+            <marker date="1558807750965" expanded="true" signature="943:945" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/evaluate.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="45" column="65" selection-start-line="45" selection-start-column="65" selection-end-line="45" selection-end-column="65" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
