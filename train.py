@@ -7,17 +7,17 @@ from preprocess import load_dataset_from_file, \
 	vocab_size, vec_dim, embedding_matrix
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # todo this is important on mac
-version_name = 'model3.3'  # todo
+version_name = 'CNN1.1'  # todo
 assert vec_dim == 300
 
-def build_RNN():
-	'''build and compile an RNN models
 
-	:return: RNN models
+def build_RNN():
+	'''build and compile an RNN models # todo powerful now
+
+	:return: RNN model
 	'''
 	dims = (300, 400, 8)
 	model = Sequential()
-	# embedding
 	model.add(layers.Embedding(input_dim=vocab_size, output_dim=dims[0], mask_zero=True,
 							   weights=[embedding_matrix], trainable=True))
 	model.add(layers.GRU(units=dims[1], return_sequences=False))
@@ -32,7 +32,23 @@ def build_RNN():
 
 
 def build_CNN():
-	pass
+	'''build and compile an CNN models
+
+	:return: CNN model
+	'''
+	model = Sequential()
+	model.add(layers.Embedding(input_dim=vocab_size, output_dim=300, input_length=500,
+							   weights=[embedding_matrix], trainable=True))
+	model.add(layers.Conv1D(filters=10, kernel_size=5, activation='relu'))
+	model.add(layers.MaxPool1D(pool_size=10, strides=5))
+	model.add(layers.Flatten())
+	model.add(layers.Dense(units=8, activation='softmax'))
+
+	opt = optimizers.Adam(lr=0.001)
+	model.compile(opt, loss='mse', metrics=['acc'])
+	model.summary()
+
+	return model
 
 
 if __name__ == '__main__':
@@ -46,7 +62,7 @@ if __name__ == '__main__':
 	train_set = load_dataset_from_file('data/sina/sinanews.train')
 
 	# build model
-	model = build_RNN()
+	model = build_CNN()
 	# model.load_weights('models/model2.0 - best.h5')
 
 	csv_logger = callbacks.CSVLogger(
