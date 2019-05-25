@@ -1,9 +1,10 @@
 import os
 
 import numpy as np
-from keras import Sequential, layers, optimizers
+from keras import Sequential, layers, optimizers, callbacks
 
-from preprocess import generator_from_file
+from preprocess import generator_from_file, split_train_val_from_file
+from evaluate import evaluate_model
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # todo this is important on mac
 
@@ -22,7 +23,7 @@ def build_RNN():
 	model.add(layers.Dropout(0.2))
 	model.add(layers.Dense(units=dims[2], activation='softmax'))
 
-	opt = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
+	opt = optimizers.RMSprop(lr=0.01, rho=0.9, epsilon=None, decay=0.01)
 	model.compile(opt, loss='mse', metrics=['acc'])
 	model.summary()
 
@@ -43,13 +44,31 @@ def load_dataset(mode: str):
 
 
 if __name__ == '__main__':
+	save_name = 'model2.1' # todo
+	# prepare data
+	split_train_val_from_file('data/sina/sinanews.train', output_dir='data/runtime', val_size=0.15)
+	train_gen = generator_from_file('data/runtime/train', batch_size=10)  # around 1700 articles
+	val_gen = generator_from_file('data/runtime/val', batch_size=10)  # around 350 articles
+	test_gen = generator_from_file('data/runtime/test', batch_size=10)  # around 2000 articles
+
+	# build model
 	model = build_RNN()
+	# model.load_weights('models/model2.0 - best.h5')
 
-	data_gen = generator_from_file('data/sina/sinanews.train', batch_size=10)  # around 2000 articles in total
-	model.fit_generator(data_gen, epochs=10, steps_per_epoch=10)
+	csv_logger = callbacks.CSVLogger(
+		'logs/%s.csv' % save_name,
+		separator=',', append=False)
+	checkpoint_logger = callbacks.ModelCheckpoint(
+		'models/%s - best.h5' % save_name,
+		monitor='val_loss', verbose=1, save_best_only=True)
 
-	test_gen = generator_from_file('data/sina/sinanews.test', batch_size=10)
-	train_loss, train_acc = model.evaluate_generator(data_gen, steps=20)
-	print(train_loss, train_acc)
+	# train
+	model.fit_generator(train_gen, epochs=10, steps_per_epoch=100, # 100 x 10 = 1000 articles
+						validation_data=val_gen, validation_steps=10, # 10 x 10 = 100
+						callbacks=[csv_logger, checkpoint_logger])
+	model.save('models/%s - final.h5' % save_name)
 
-	model.save('models/state2.0.h5')
+	# evaluate
+	test_loss, test_acc = model.evaluate_generator(test_gen, steps=200)
+	print('\n\033[1;34mtest_loss = %f\ntest_acc = %f' % (test_loss, test_acc), '\033[0m\n')
+	evaluate_model(model, steps=30)

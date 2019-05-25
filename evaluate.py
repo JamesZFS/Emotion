@@ -1,15 +1,15 @@
 import os
+
 from keras import Sequential
+from numpy import set_printoptions
 
 from preprocess import tag_list, generator_from_file_debug
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # todo this is important on mac
 
 
-def evaluate_model(model: Sequential, eval_data_path: str = 'data/sina/sinanews.demo', steps: int = 10):
-	# data_gen = generator_from_file(eval_data_path, batch_size=1)
-	# res = model.predict_generator(data_gen, steps)
-
+def evaluate_model(model: Sequential, eval_data_path: str = 'data/sina/sinanews.test', steps: int = 10):
+	set_printoptions(precision=3, suppress=True)
 	data_gen = generator_from_file_debug(eval_data_path, batch_size=1)
 	print('\033[95mEvaluating on %s\nTags: %s\033[0m' % (os.path.basename(eval_data_path), ' '.join(tag_list)))
 	correct = 0
@@ -37,16 +37,12 @@ def evaluate_model(model: Sequential, eval_data_path: str = 'data/sina/sinanews.
 
 if __name__ == '__main__':
 	from train import build_RNN
-	from numpy import set_printoptions
 
 	model = build_RNN()
-	model.load_weights('models/state1.0.h5')
-
-	set_printoptions(precision=3, suppress=True)
+	model.load_weights('models/model2.0 - final.h5')
 
 	evaluate_model(model, eval_data_path='data/sina/sinanews.demo', steps=8)
 
 	evaluate_model(model, eval_data_path='data/sina/sinanews.train', steps=20)
 
 	evaluate_model(model, eval_data_path='data/sina/sinanews.test', steps=20)
-
