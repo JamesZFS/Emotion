@@ -1,18 +1,18 @@
 import os
-import numpy as np
 
+import numpy as np
 from keras import Sequential, layers, optimizers
 
-import preprocess
+from preprocess import generator_from_file
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # todo this is important on mac
 
 
 def build_RNN():
 	'''
-	build and compile an RNN model
+	build and compile an RNN models
 
-	:return: RNN model
+	:return: RNN models
 	'''
 	dims = (300, 100, 8)
 	model = Sequential()
@@ -42,27 +42,6 @@ def load_dataset(mode: str):
 	return X, Y
 
 
-def generator_from_file(raw_path: str, batch_size: int = 10):
-	'''
-	generate data from file
-
-	:param raw_path: news path
-	:return: yield (x, y) x shape like (xxx, 300), y shape like (8,)
-	'''
-	with open(raw_path, 'r') as f:
-		while True:
-			X, Y = [], []
-			for _ in range(batch_size):
-				line = f.readline()
-				if not line:
-					f.seek(0) # start over
-					line = f.readline()
-				Y.append(preprocess.get_tag(line))
-				X.append(preprocess.get_embedding_list(line, time_steps=500, silent=True))
-
-			yield np.array(X), np.array(Y)
-
-
 if __name__ == '__main__':
 	model = build_RNN()
 
@@ -73,4 +52,4 @@ if __name__ == '__main__':
 	train_loss, train_acc = model.evaluate_generator(data_gen, steps=20)
 	print(train_loss, train_acc)
 
-	model.save('model/state.h5')
+	model.save('models/state2.0.h5')
