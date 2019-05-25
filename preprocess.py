@@ -3,18 +3,18 @@ import pickle
 import re
 
 import numpy as np
-# from  keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+from keras.preprocessing.text import Tokenizer
+from encoder import tag_pattern, tag_list
 
-tag_list = ('感动', '同情', '无聊', '愤怒', '搞笑', '难过', '新奇', '温馨')
-
-tag_pattern = \
-	re.compile('感动:(\d+) 同情:(\d+) 无聊:(\d+) 愤怒:(\d+) 搞笑:(\d+) 难过:(\d+) 新奇:(\d+) 温馨:(\d+)', re.U)
-
-print('loading embedding_dict now...')
-with open('embeddings/embeddings.dict', 'rb') as f:
-	embedding_dict = pickle.load(f)
-vec_dim = len(embedding_dict['，'])
-print('\rembedding_dict loaded, vec_dim = %d' % vec_dim)
+print('now loading encoder and embedding matrix...')
+with open('embeddings/encoder.tknz', 'rb') as f:
+	tknz = pickle.load(f)
+assert isinstance(tknz, Tokenizer)
+word_index = tknz.word_index
+embedding_matrix = np.load('embeddings/embedding_matrix.npy')
+print('loaded.')
+word_pattern = re.compile('\D+', re.U)
 
 
 def get_tag(line: str):
@@ -32,38 +32,40 @@ def get_tag(line: str):
 	return np.array(tag)
 
 
-def get_embedding_list(line: str, time_steps: int = 500, silent: bool = False):
-	'''
+def get_encoded_text(line: str, article_length: int = 500):
+	'''get encoded text of an article
 
 	:param line: one line of article
-	:return: an ndarray of word embeddings in the article (time_step, vec_dim)
+	:return: array of word indexes
 	'''
 	global embedding_dict, vec_dim
 	mt = tag_pattern.search(line)
 	assert mt
 	line = line[mt.end():].strip()
-	words = line.split(' ')
-	embedding_list = []
-	unknowns = set()
+	# get words
+	words = filter_words(line.split(' '))
+	print(words)
+	encoded = []
+	# encoding
 	for word in words:
-		if not embedding_dict.get(word):
-			embedding_list.append(np.random.randn(vec_dim))  # unk
-			unknowns.add(word)
+		index = word_index.get(word)
+		if index is None:
+			print('word %s is unknown' % word)
 		else:
-			embedding_list.append(embedding_dict[word])
-	if silent == False: print('unknown words:', unknowns)
-	if time_steps > 0:
-		padding = time_steps - len(embedding_list)
-		if padding < 0:
-			# article too long, randomly slice short
-			cut = np.random.randint(0, len(embedding_list) - time_steps)
-			embedding_list = embedding_list[cut: cut + time_steps]
-		else:
-			# pad zeros to time_step
-			for _ in range(padding):
-				embedding_list.append(np.zeros(vec_dim))
+			encoded.append(index)
+	# padding
+	print(encoded)
+	assert article_length > 0
+	pad_sequences(encoded, article_length, padding='post', truncating='post')
 
-	return np.array(embedding_list)
+	return encoded
+
+
+def filter_words(words: list):
+	filtered = []
+	for word in words:
+		filtered += word_pattern.findall(word)
+	return filtered
 
 
 def get_article_max_len(file: str):
@@ -92,7 +94,7 @@ def generator_from_file(raw_path: str, batch_size: int = 10, shuffle: bool = Tru
 	generate data from file
 
 	:param raw_path: news path
-	:return: yield (X, Y) X shape like (batch_size, 500, 300), Y shape like (batch_size, 8)
+	:return: yield (X, Y) X shape like (batch_size, 500), Y shape like (batch_size, 8)
 	'''
 	with open(raw_path, 'r') as f:
 		lines = f.readlines()
@@ -106,7 +108,7 @@ def generator_from_file(raw_path: str, batch_size: int = 10, shuffle: bool = Tru
 			cur_idx += 1
 			if cur_idx == len(lines): cur_idx = 0  # start over
 			Y.append(get_tag(line))
-			X.append(get_embedding_list(line, silent=True))
+			X.append(get_encoded_text(line))
 
 		yield np.array(X), np.array(Y)
 
@@ -116,7 +118,7 @@ def generator_from_file_debug(raw_path: str, batch_size: int = 10, shuffle: bool
 	generate data from file
 
 	:param raw_path: news path
-	:return: yield (X, Y, articles) X shape like (batch_size, 500, 300), Y shape like (batch_size, 8),
+	:return: yield (X, Y, articles) X shape like (batch_size, 500), Y shape like (batch_size, 8),
 		articles shape like (batch_size,) of str
 	'''
 	with open(raw_path, 'r') as f:
@@ -131,7 +133,7 @@ def generator_from_file_debug(raw_path: str, batch_size: int = 10, shuffle: bool
 			cur_idx += 1
 			if cur_idx == len(lines): cur_idx = 0  # start over
 			Y.append(get_tag(line))
-			X.append(get_embedding_list(line, silent=True))
+			X.append(get_encoded_text(line))
 			mt = tag_pattern.search(line)
 			articles.append(''.join(line[mt.end():].split(' ')))
 
@@ -159,23 +161,13 @@ def split_train_val_from_file(raw_path: str, output_dir: str, val_size: float = 
 
 
 if __name__ == '__main__':
-	# mode = 'train'
-	# with open('data/sina/sinanews.%s' % mode, 'r') as f:
-	# 	lines = f.readlines()
-	#
-	# X = []
-	# Y = []
-	# for line in tqdm(lines, desc='converting...'):
-	# 	Y.append(get_tag(line))
-	# 	X.append(get_embedding_list(line))
-	#
-	# print('saving now...')
-	# np.save('data/done/X.%s.npy' % mode, X)
-	# np.save('data/done/Y.%s.npy' % mode, Y)
-
-	# print(get_article_max_len('data/sina/sinanews.demo'))
-	split_train_val_from_file('data/sina/sinanews.train', 'data/train_val_test', val_size=0.15)
-	f = open('data/train_val_test/val', 'r')
-	lines = f.readlines()
-	print(len(lines))
-	print(lines[-1])
+	# split_train_val_from_file('data/sina/sinanews.train', 'data/train_val_test', val_size=0.15)
+	# f = open('data/train_val_test/val', 'r')
+	# lines = f.readlines()
+	# print(len(lines))
+	# print(lines[-1])
+	# assert filter_words(['123', '123', '7月8号', '1天后']) == ['月', '号', '天后']
+	data_gen = generator_from_file('data/sina/sinanews.demo', 1)
+	X, Y = next(data_gen)
+	print(X)
+	print(Y)
