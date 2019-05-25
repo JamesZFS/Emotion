@@ -3,7 +3,8 @@ import os
 from keras import Sequential
 from numpy import set_printoptions
 
-from preprocess import tag_list, generator_from_file, generator_from_file_debug
+from preprocess import generator_from_file, generator_from_file_debug
+from encoder import tag_list
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # todo this is important on mac
 

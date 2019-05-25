@@ -3,11 +3,13 @@ import os
 import numpy as np
 from keras import Sequential, layers, optimizers, callbacks
 
-from preprocess import generator_from_file, split_train_val_from_file
+from preprocess import generator_from_file, split_train_val_from_file, \
+	vocab_size, vec_dim, embedding_matrix
 from evaluate import evaluate_model
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # todo this is important on mac
-version_name = 'model2.4' # todo
+version_name = 'model3.0'  # todo
+assert vec_dim == 300
 
 def build_RNN():
 	'''build and compile an RNN models
@@ -17,14 +19,14 @@ def build_RNN():
 	dims = (300, 200, 8)
 	model = Sequential()
 	# embedding
-	layers.Embedding(weights=[], trainable=False)
-	model.add(layers.InputLayer(input_shape=(None, dims[0])))
+	model.add(layers.Embedding(input_dim=vocab_size, output_dim=dims[0],
+							   weights=[embedding_matrix], trainable=True))
 	model.add(layers.Masking(mask_value=0.0))
 	model.add(layers.GRU(units=dims[1], return_sequences=False))
 	model.add(layers.Dropout(0.2))
 	model.add(layers.Dense(units=dims[2], activation='softmax'))
 
-	opt = optimizers.RMSprop(lr=0.01, rho=0.9, epsilon=None, decay=0.01)
+	opt = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.01)
 	model.compile(opt, loss='mse', metrics=['acc'])
 	model.summary()
 
@@ -67,8 +69,8 @@ if __name__ == '__main__':
 		monitor='val_loss', verbose=1, save_best_only=True)
 
 	# train
-	model.fit_generator(train_gen, epochs=5, steps_per_epoch=100, # 100 x 10 = 1000 articles / epoch
-						validation_data=val_gen, validation_steps=10, # 10 x 10 = 100
+	model.fit_generator(train_gen, epochs=5, steps_per_epoch=100,  # 100 x 10 = 1000 articles / epoch
+						validation_data=val_gen, validation_steps=10,  # 10 x 10 = 100
 						verbose=1, callbacks=[csv_logger, checkpoint_logger])
 	model.save('models/%s - final.h5' % version_name)
 

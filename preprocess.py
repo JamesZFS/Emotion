@@ -3,9 +3,9 @@ import pickle
 import re
 
 import numpy as np
-from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
-from encoder import tag_pattern, tag_list
+
+from encoder import tag_pattern
 
 print('now loading encoder and embedding matrix...')
 with open('embeddings/encoder.tknz', 'rb') as f:
@@ -13,7 +13,9 @@ with open('embeddings/encoder.tknz', 'rb') as f:
 assert isinstance(tknz, Tokenizer)
 word_index = tknz.word_index
 embedding_matrix = np.load('embeddings/embedding_matrix.npy')
-print('loaded.')
+vocab_size = embedding_matrix.shape[0]
+vec_dim = embedding_matrix.shape[1]
+print('loaded, vocab_size = %d, vec_dim = %d' % (vocab_size, vec_dim))
 word_pattern = re.compile('\D+', re.U)
 
 
@@ -32,33 +34,38 @@ def get_tag(line: str):
 	return np.array(tag)
 
 
-def get_encoded_text(line: str, article_length: int = 500):
+def get_encoded_text(line: str, article_length: int = 500, silent: bool = True):
 	'''get encoded text of an article
 
 	:param line: one line of article
 	:return: array of word indexes
 	'''
-	global embedding_dict, vec_dim
 	mt = tag_pattern.search(line)
 	assert mt
 	line = line[mt.end():].strip()
 	# get words
 	words = filter_words(line.split(' '))
-	print(words)
-	encoded = []
+	encoded_list = []
 	# encoding
 	for word in words:
 		index = word_index.get(word)
 		if index is None:
-			print('word %s is unknown' % word)
+			if not silent: print('word %s is unknown' % word)
 		else:
-			encoded.append(index)
+			encoded_list.append(index)
 	# padding
-	print(encoded)
-	assert article_length > 0
-	pad_sequences(encoded, article_length, padding='post', truncating='post')
+	if article_length > 0:
+		padding = article_length - len(encoded_list)
+		if padding < 0:
+			# article too long, randomly slice short
+			cut = np.random.randint(0, len(encoded_list) - article_length)
+			encoded_list = encoded_list[cut: cut + article_length]
+		else:
+			# pad zeros to time_step
+			for _ in range(padding):
+				encoded_list.append(0)
 
-	return encoded
+	return encoded_list
 
 
 def filter_words(words: list):
