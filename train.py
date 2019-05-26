@@ -1,13 +1,14 @@
 import os
 
 from keras import Sequential, layers, optimizers, callbacks
+from keras.models import load_model
 
 from evaluate import evaluate_model
 from preprocess import load_dataset_from_file, \
 	vocab_size, vec_dim, embedding_matrix
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # todo this is important on mac
-version_name = 'CNN1.1'  # todo
+version_name = 'CNN1.2'  # todo
 assert vec_dim == 300
 
 
@@ -39,12 +40,12 @@ def build_CNN():
 	model = Sequential()
 	model.add(layers.Embedding(input_dim=vocab_size, output_dim=300, input_length=500,
 							   weights=[embedding_matrix], trainable=True))
-	model.add(layers.Conv1D(filters=10, kernel_size=5, activation='relu'))
-	model.add(layers.MaxPool1D(pool_size=10, strides=5))
+	model.add(layers.Conv1D(filters=30, kernel_size=5, activation='relu'))
+	model.add(layers.MaxPool1D(pool_size=20, strides=5))
 	model.add(layers.Flatten())
 	model.add(layers.Dense(units=8, activation='softmax'))
 
-	opt = optimizers.Adam(lr=0.001)
+	opt = optimizers.Adam(lr=0.001, decay=0.01)
 	model.compile(opt, loss='mse', metrics=['acc'])
 	model.summary()
 
@@ -59,15 +60,16 @@ if __name__ == '__main__':
 	val_gen = generator_from_file('data/runtime/val', batch_size=10)  # around 350 articles
 	test_gen = generator_from_file('data/runtime/test', batch_size=10)  # around 2000 articles
 	'''
-	train_set = load_dataset_from_file('data/sina/sinanews.train')
+	train_set = load_dataset_from_file('data/sina/sinanews.train', shuffle=False)
 
 	# build model
 	model = build_CNN()
-	# model.load_weights('models/model2.0 - best.h5')
+	# model = load_model('models/CNN1.2 - final.h5', compile=True)
+	# assert isinstance(model, Sequential)
 
 	csv_logger = callbacks.CSVLogger(
 		'logs/%s.csv' % version_name,
-		separator=',', append=False)
+		separator=',', append=True)
 	checkpoint_logger = callbacks.ModelCheckpoint(
 		'models/%s - best.h5' % version_name,
 		monitor='val_loss', verbose=1, save_best_only=True)
@@ -78,7 +80,7 @@ if __name__ == '__main__':
 						validation_data=val_gen, validation_steps=10,  # 10 x 10 = 100
 						verbose=1, callbacks=[csv_logger, checkpoint_logger])
 	'''
-	model.fit(train_set[0], train_set[1], validation_split=0.15, epochs=3,
+	model.fit(train_set[0], train_set[1], validation_split=0.15, epochs=15,
 			  verbose=1, callbacks=[csv_logger, checkpoint_logger])
 	model.save('models/%s - final.h5' % version_name)
 
