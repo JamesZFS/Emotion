@@ -38,12 +38,14 @@ def evaluate_model(model: Sequential, eval_data_path: str = 'data/sina/sinanews.
 
 
 if __name__ == '__main__':
-	model = load_model('models/model3.1 - best.h5')
+	from train import version_name
+	print(version_name)
+	model = load_model('models/%s - best.h5' % version_name)
 	assert isinstance(model, Sequential)
 	model.summary()
 
 	test_set = load_dataset_from_file('data/sina/sinanews.test')
-	test_loss, test_acc = model.evaluate(test_set[0], test_set[1])
+	test_loss, test_acc = model.evaluate(test_set[0], test_set[1], batch_size=20)
 	print('\n\033[1;34mtest_loss = %f\ntest_acc = %f' % (test_loss, test_acc), '\033[0m\n')
 
 	evaluate_model(model, eval_data_path='data/sina/sinanews.demo', steps=8)

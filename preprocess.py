@@ -34,7 +34,7 @@ def get_tag(line: str):
 	return np.array(tag)
 
 
-def get_encoded_text(line: str, article_length: int = 500, silent: bool = True):
+def get_encoded_text(line: str, article_length: int = 1000, silent: bool = True):
 	'''get encoded text of an article
 
 	:param line: one line of article
