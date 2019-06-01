@@ -3,15 +3,26 @@ import os
 from keras import Sequential, layers, optimizers, callbacks
 from keras.models import load_model
 
-from evaluate import evaluate_model
+from evaluate import visualize_model
 from preprocess import load_dataset_from_file, \
 	vocab_size, vec_dim, embedding_matrix
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # todo this is important on mac
 # version_name = 'DeepBiLSTM1.0'
-version_name = 'BiLSTM2.4'
-# version_name = 'LSTM2.0'  # todo
+# version_name = 'BiLSTM2.4'
+# version_name = 'LSTM2.0'
+# version_name = 'MLP2.0'
+version_name = 'TEST'
 assert vec_dim == 300
+
+
+def build_TEST():
+	model = Sequential([
+		layers.Dense(8, input_shape=(1000,), activation='softmax')
+	])
+	model.compile('sgd', 'mse', ['acc'])
+	model.summary()
+	return model
 
 
 def build_LSTM():
@@ -120,9 +131,11 @@ def build_MLP():
 		layers.Embedding(input_dim=vocab_size, output_dim=300, input_length=500,
 						 weights=[embedding_matrix], trainable=False),
 		layers.Flatten(),
-		layers.Dense(500, activation='relu'),
+		layers.Dense(300, activation='relu'),
 		layers.Dropout(0.5),
 		layers.Dense(100, activation='relu'),
+		layers.Dropout(0.5),
+		layers.Dense(50, activation='relu'),
 		layers.Dropout(0.5),
 		layers.Dense(8, activation='softmax'),
 	])
@@ -146,7 +159,7 @@ if __name__ == '__main__':
 	# print(train_set[1][:5])
 
 	# build model
-	model = build_Bi_LSTM()
+	model = build_TEST()
 	# model = load_model('models/CNN1.2 - final.h5', compile=True)
 	# assert isinstance(model, Sequential)
 
@@ -173,4 +186,4 @@ if __name__ == '__main__':
 	# test_loss, test_acc = model.evaluate_generator(test_gen, steps=223)
 	test_loss, test_acc = model.evaluate(test_set[0], test_set[1], batch_size=20)
 	print('\n\033[1;34mtest_loss = %f\ntest_acc = %f' % (test_loss, test_acc), '\033[0m\n')
-	evaluate_model(model, steps=30)
+	visualize_model(model, steps=30)

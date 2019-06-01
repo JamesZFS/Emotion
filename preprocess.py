@@ -100,7 +100,7 @@ def load_dataset_from_file(raw_path: str, shuffle: bool = True):
 	'''load dataset from file
 
 	:param raw_path: news path
-	:return: (X, Y) where X shape like (n_article, 500), Y shape like (n_article, 8)
+	:return: (X, Y) where X shape like (n_article, 1000), Y shape like (n_article, 8)
 	'''
 	with open(raw_path, 'r') as f:
 		lines = f.readlines()
