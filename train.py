@@ -1,28 +1,34 @@
 import os
 
+import keras.backend.tensorflow_backend as KTF
+import tensorflow as tf
 from keras import Sequential, layers, optimizers, callbacks
-from keras.models import load_model
 
-from evaluate import visualize_model
+from config import *
+from evaluate import evaluate_model
 from preprocess import load_dataset_from_file, \
 	vocab_size, vec_dim, embedding_matrix
 
-os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # todo this is important on mac
-# version_name = 'DeepBiLSTM1.0'
-# version_name = 'BiLSTM2.4'
-# version_name = 'LSTM2.0'
-# version_name = 'MLP2.0'
-version_name = 'TEST'
+if must_use_cpu:
+	num_cores = 4
+	num_CPU = 1
+	num_GPU = 0
+	config = tf.ConfigProto(intra_op_parallelism_threads=num_cores,
+							inter_op_parallelism_threads=num_cores, allow_soft_placement=True,
+							device_count={'CPU': num_CPU, 'GPU': num_GPU})
+	session = tf.Session(config=config)
+	KTF.set_session(session)
+
+if method == 'norm':
+	loss = 'mse'
+elif method == 'one hot':
+	loss = 'categorical_crossentropy'
+else:
+	raise ValueError('method should be either \'norm\' or \'one hot\'')
+
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+
 assert vec_dim == 300
-
-
-def build_TEST():
-	model = Sequential([
-		layers.Dense(8, input_shape=(1000,), activation='softmax')
-	])
-	model.compile('sgd', 'mse', ['acc'])
-	model.summary()
-	return model
 
 
 def build_LSTM():
@@ -38,17 +44,15 @@ def build_LSTM():
 	model.add(layers.Dropout(0.5))
 	model.add(layers.Dense(units=dims[2], activation='softmax'))
 
-	# opt = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.01)
 	opt = optimizers.Adam(lr=1e-4, epsilon=1e-8)
-	# model.compile(opt, loss='mse', metrics=['acc'])
-	model.compile(opt, loss='categorical_crossentropy', metrics=['acc'])
+	model.compile(opt, loss=loss, metrics=['acc'])
 	model.summary()
 
 	return model
 
 
 def build_Bi_LSTM():
-	'''build and compile an RNN models
+	'''build and compile an RNN model
 
 	:return: RNN model
 	'''
@@ -60,17 +64,15 @@ def build_Bi_LSTM():
 	model.add(layers.Dropout(0.5))
 	model.add(layers.Dense(units=dims[2], activation='softmax'))
 
-	# opt = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.01)
 	opt = optimizers.Adam(lr=1e-4, epsilon=1e-8)
-	# model.compile(opt, loss='mse', metrics=['acc'])
-	model.compile(opt, loss='categorical_crossentropy', metrics=['acc'])
+	model.compile(opt, loss=loss, metrics=['acc'])
 	model.summary()
 
 	return model
 
 
 def build_Deep_Bi_LSTM():
-	'''build and compile an RNN model # todo powerful now
+	'''build and compile an RNN model
 
 	:return: RNN model
 	'''
@@ -83,16 +85,13 @@ def build_Deep_Bi_LSTM():
 		layers.Dropout(0.4),
 		layers.Bidirectional(layers.LSTM(vec_dim, return_sequences=True)),
 		layers.Dropout(0.4),
-		# layers.Bidirectional(layers.LSTM(vec_dim, return_sequences=True)),
-		# layers.Dropout(0.4),
 		layers.LSTM(200, return_sequences=False),
 		layers.Dropout(0.4),
 		layers.Dense(8, activation='softmax'),
 	])
 
 	opt = optimizers.RMSprop(lr=1e-4, rho=0.9, epsilon=None, decay=0.01)
-	# model.compile(opt, loss='mse', metrics=['acc'])
-	model.compile(opt, loss='categorical_crossentropy', metrics=['acc'])
+	model.compile(opt, loss=loss, metrics=['acc'])
 	model.summary()
 
 	return model
@@ -106,17 +105,13 @@ def build_CNN():
 	model = Sequential()
 	model.add(layers.Embedding(input_dim=vocab_size, output_dim=300, input_length=1000,
 							   weights=[embedding_matrix], trainable=False))
-	model.add(layers.Conv1D(filters=20, kernel_size=10, activation='relu'))
-	model.add(layers.MaxPool1D(pool_size=2, strides=2))
-	model.add(layers.Dropout(0.5))
-	model.add(layers.Conv1D(filters=20, kernel_size=10, activation='relu'))
-	model.add(layers.MaxPool1D(pool_size=10, strides=5))
+	model.add(layers.Conv1D(filters=200, kernel_size=10, activation='relu'))
 	model.add(layers.Dropout(0.5))
 	model.add(layers.Flatten())
 	model.add(layers.Dense(units=8, activation='softmax'))
 
-	opt = optimizers.Adam(lr=0.001, epsilon=1e-8)
-	model.compile(opt, loss='categorical_crossentropy', metrics=['acc'])
+	opt = optimizers.Adam(lr=1e-4, epsilon=1e-8)
+	model.compile(opt, loss=loss, metrics=['acc'])
 	model.summary()
 
 	return model
@@ -128,39 +123,37 @@ def build_MLP():
 	:return: MLP model
 	'''
 	model = Sequential([
-		layers.Embedding(input_dim=vocab_size, output_dim=300, input_length=500,
+		layers.Embedding(input_dim=vocab_size, output_dim=300, input_length=1000,
 						 weights=[embedding_matrix], trainable=False),
 		layers.Flatten(),
-		layers.Dense(300, activation='relu'),
-		layers.Dropout(0.5),
-		layers.Dense(100, activation='relu'),
-		layers.Dropout(0.5),
-		layers.Dense(50, activation='relu'),
+		layers.Dense(200, activation='relu'),
 		layers.Dropout(0.5),
 		layers.Dense(8, activation='softmax'),
 	])
 
 	opt = optimizers.Adam(lr=0.0001, epsilon=1e-8)
-	model.compile(opt, loss='categorical_crossentropy', metrics=['acc'])
+	model.compile(opt, loss=loss, metrics=['acc'])
 	model.summary()
 
 	return model
 
 
 if __name__ == '__main__':
+	print('now training', version_name)
 	# prepare data
-	# split_train_val_from_file('data/sina/sinanews.train', output_dir='data/runtime', val_size=0.15)
-	'''
-	train_gen = generator_from_file('data/runtime/train', batch_size=10)  # around 1700 articles
-	val_gen = generator_from_file('data/runtime/val', batch_size=10)  # around 350 articles
-	test_gen = generator_from_file('data/runtime/test', batch_size=10)  # around 2000 articles
-	'''
-	train_set = load_dataset_from_file('data/sina/sinanews.train')
-	# print(train_set[1][:5])
+	train_set = load_dataset_from_file(train_file, shuffle=False)
 
 	# build model
-	model = build_TEST()
-	# model = load_model('models/CNN1.2 - final.h5', compile=True)
+	if build_type == 'MLP':
+		model = build_MLP()
+	elif build_type == 'RNN':
+		model = build_Bi_LSTM()
+	elif build_type == 'CNN':
+		model = build_CNN()
+	else:
+		raise ValueError('build_type should be either \'MLP\' or \'RNN\' or \'CNN\'')
+
+	# model = load_model('models/%s - final.h5' % version_name, compile=True)
 	# assert isinstance(model, Sequential)
 
 	csv_logger = callbacks.CSVLogger(
@@ -169,21 +162,18 @@ if __name__ == '__main__':
 	checkpoint_logger = callbacks.ModelCheckpoint(
 		'models/%s - best.h5' % version_name,
 		monitor='val_loss', verbose=1, save_best_only=True)
+	early_stopping = callbacks.EarlyStopping(patience=2)
 
 	# train
-	'''
-	model.fit_generator(train_gen, epochs=5, steps_per_epoch=100,  # 100 x 10 = 1000 articles / epoch
-						validation_data=val_gen, validation_steps=10,  # 10 x 10 = 100
-						verbose=1, callbacks=[csv_logger, checkpoint_logger])
-	'''
-	model.fit(train_set[0], train_set[1], validation_split=0.10, epochs=5, batch_size=20,
-			  verbose=1, callbacks=[csv_logger, checkpoint_logger])
+	model.fit(train_set[0], train_set[1], validation_split=0.10, epochs=5, batch_size=20, initial_epoch=0,
+			  verbose=1, callbacks=[csv_logger, checkpoint_logger, early_stopping])
 	model.save('models/%s - final.h5' % version_name)
 
-	# evaluate
+	# evaluate best model
 	del train_set
-	test_set = load_dataset_from_file('data/sina/sinanews.test')
-	# test_loss, test_acc = model.evaluate_generator(test_gen, steps=223)
-	test_loss, test_acc = model.evaluate(test_set[0], test_set[1], batch_size=20)
-	print('\n\033[1;34mtest_loss = %f\ntest_acc = %f' % (test_loss, test_acc), '\033[0m\n')
-	visualize_model(model, steps=30)
+	test_set = load_dataset_from_file(test_file)
+	model.load_weights('models/%s - best.h5' % version_name)
+	res = evaluate_model(model, test_set)
+	with open('results/%s.txt' % version_name, 'w') as f:
+		f.writelines([str(res[0]), '\n', str(res[1]), '\n', str(res[2]), '\n', str(res[3]), '\n'])
+	print(version_name)

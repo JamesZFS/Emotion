@@ -5,6 +5,7 @@ import re
 import numpy as np
 from keras.preprocessing.text import Tokenizer
 
+from config import method
 from encoder import tag_pattern
 
 print('now loading encoder and embedding matrix...')
@@ -18,8 +19,7 @@ vec_dim = embedding_matrix.shape[1]
 print('loaded, vocab_size = %d, vec_dim = %d' % (vocab_size, vec_dim))
 word_pattern = re.compile('\D+', re.U)
 
-
-def get_tag(line: str):
+def get_tag_norm(line: str):
 	'''
 
 	:param line: one line of article
@@ -30,9 +30,28 @@ def get_tag(line: str):
 	tag = list(map(int, mt.groups()))
 	sum_up = sum(tag)
 	tag = list(map(lambda x: x / sum_up, tag))  # normalize
-
 	return np.array(tag)
 
+
+def get_tag_one_hot(line: str):
+	'''
+
+	:param line: one line of article
+	:return: tag (one hot) , ndarray
+	'''
+	mt = tag_pattern.search(line)
+	assert mt
+	tag = list(map(int, mt.groups()))
+	y = np.zeros_like(tag)
+	y[np.argmax(tag)] = 1
+	return y
+
+if method == 'norm':
+	get_tag = get_tag_norm
+elif method == 'one hot':
+	get_tag = get_tag_one_hot
+else:
+	raise ValueError('method should be either \'norm\' or \'one hot\'')
 
 def get_encoded_text(line: str, article_length: int = 1000, silent: bool = True):
 	'''get encoded text of an article
@@ -82,7 +101,7 @@ def get_article_max_len(file: str):
 	:param file: filename of dataset
 	:return: int, max_len
 	'''
-	with open(file, 'r') as f:
+	with open(file, 'r', encoding='utf-8') as f:
 		max_len = 0
 		while True:
 			line = f.readline()
@@ -100,9 +119,9 @@ def load_dataset_from_file(raw_path: str, shuffle: bool = True):
 	'''load dataset from file
 
 	:param raw_path: news path
-	:return: (X, Y) where X shape like (n_article, 1000), Y shape like (n_article, 8)
+	:return: (X, Y) where X shape like (n_article, 500), Y shape like (n_article, 8)
 	'''
-	with open(raw_path, 'r') as f:
+	with open(raw_path, 'r', encoding='utf-8') as f:
 		lines = f.readlines()
 	if shuffle: np.random.shuffle(lines)
 
@@ -121,7 +140,7 @@ def generator_from_file(raw_path: str, batch_size: int = 10, shuffle: bool = Tru
 	:param raw_path: news path
 	:return: yield (X, Y) X shape like (batch_size, 500), Y shape like (batch_size, 8)
 	'''
-	with open(raw_path, 'r') as f:
+	with open(raw_path, 'r', encoding='utf-8') as f:
 		lines = f.readlines()
 	if shuffle: np.random.shuffle(lines)
 
@@ -146,7 +165,7 @@ def generator_from_file_debug(raw_path: str, batch_size: int = 10, shuffle: bool
 	:return: yield (X, Y, articles) X shape like (batch_size, 500), Y shape like (batch_size, 8),
 		articles shape like (batch_size,) of str
 	'''
-	with open(raw_path, 'r') as f:
+	with open(raw_path, 'r', encoding='utf-8') as f:
 		lines = f.readlines()
 	if shuffle: np.random.shuffle(lines)
 
@@ -171,7 +190,7 @@ def split_train_val_from_file(raw_path: str, output_dir: str, val_size: float = 
 
 	:param raw_path: news path
 	'''
-	with open(raw_path, 'r') as f:
+	with open(raw_path, 'r', encoding='utf-8') as f:
 		lines = f.readlines()
 	if shuffle: np.random.shuffle(lines)
 
@@ -179,9 +198,9 @@ def split_train_val_from_file(raw_path: str, output_dir: str, val_size: float = 
 	train = lines[cut:]
 	val = lines[:cut]
 	if not os.path.exists(output_dir): os.mkdir(output_dir)
-	with open(os.path.join(output_dir, 'train'), 'w') as f:
+	with open(os.path.join(output_dir, 'train'), 'w', encoding='utf-8') as f:
 		f.writelines(train)
-	with open(os.path.join(output_dir, 'val'), 'w') as f:
+	with open(os.path.join(output_dir, 'val'), 'w', encoding='utf-8') as f:
 		f.writelines(val)
 
 
@@ -192,7 +211,12 @@ if __name__ == '__main__':
 	# print(len(lines))
 	# print(lines[-1])
 	# assert filter_words(['123', '123', '7月8号', '1天后']) == ['月', '号', '天后']
-	data_gen = generator_from_file('data/sina/sinanews.demo', 1)
-	X, Y = next(data_gen)
-	print(X)
-	print(Y)
+	# data_gen = generator_from_file('data/sina/sinanews.demo', 1)
+	# X, Y = next(data_gen)
+	# print(X)
+	# print(Y)
+	print(word_index)
+	embedding_matrix[0] = np.zeros_like(embedding_matrix[1])
+	np.save('embeddings/embedding_matrix.npy', embedding_matrix)
+	# print(embedding_matrix.shape)
+	# print(embedding_matrix[0])

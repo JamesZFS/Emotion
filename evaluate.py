@@ -1,15 +1,17 @@
 import os
 
+import numpy as np
 from keras import Sequential
 from keras.models import load_model
-import numpy as np
-from sklearn import metrics
+from matplotlib import pyplot as plt
 from scipy.stats import pearsonr
+from sklearn import metrics
 
-from preprocess import load_dataset_from_file, generator_from_file_debug
+from config import *
 from encoder import tag_list
+from preprocess import load_dataset_from_file, generator_from_file_debug
 
-os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # todo this is important on mac
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 
 def visualize_model(model: Sequential, eval_data_path: str = 'data/sina/sinanews.test', steps: int = 10):
@@ -50,6 +52,12 @@ def evaluate_model(model: Sequential, eval_data: tuple):
 
 	Y_true = np.argmax(Y_true, axis=1)
 	Y_pred = np.argmax(Y_pred, axis=1)
+	plt.hist(Y_true, bins=8)
+	plt.title('Y_true dist')
+	plt.show()
+	plt.hist(Y_pred, bins=8)
+	plt.title('Y_pred dist')
+	plt.show()
 	print(Y_true.shape)
 	print(Y_pred.shape)
 	acc = metrics.accuracy_score(Y_true, Y_pred)
@@ -59,24 +67,19 @@ def evaluate_model(model: Sequential, eval_data: tuple):
 	print('acc      =', acc)
 	print('micro f1 =', f1_micro)
 	print('macro f1 =', f1_macro)
-	return acc, f1_micro, f1_macro
+	return cov, acc, f1_micro, f1_macro
 
 
 if __name__ == '__main__':
-	# from train import version_name
-	version_name = 'CNN2.1'
-	print(version_name)
+	print('now testing', version_name)
 	model = load_model('models/%s - best.h5' % version_name)
 	assert isinstance(model, Sequential)
 	model.summary()
 
-	test_set = load_dataset_from_file('data/sina/sinanews.test')
-	evaluate_model(model, test_set)
-	# test_loss, test_acc = model.evaluate(test_set[0], test_set[1], batch_size=20)
-	# print('\n\033[1;34mtest_loss = %f\ntest_acc = %f' % (test_loss, test_acc), '\033[0m\n')
+	visualize_model(model, eval_data_path=test_file, steps=10)
 
-	# visualize_model(model, eval_data_path='data/sina/sinanews.demo', steps=8)
-
-	# visualize_model(model, eval_data_path='data/sina/sinanews.train', steps=20)
-
-	# visualize_model(model, eval_data_path='data/sina/sinanews.test', steps=30)
+	test_set = load_dataset_from_file(test_file)
+	res = evaluate_model(model, test_set)
+	with open('results/%s.txt' % version_name, 'w') as f:
+		f.writelines([str(res[0]), '\n', str(res[1]), '\n', str(res[2]), '\n', str(res[3]), '\n'])
+	print(version_name)
